@@ -1,8 +1,8 @@
 # **xshopt** library
 
 ### **xshopt** definition
-**xshopt** means literally: *eXtreme SH Opt Library*
-**xshopt** is compatible with bash and dash/POSIX scripting.
+* **xshopt** means literally: *eXtreme SH Opt Library*
+* **xshopt** is compatible with bash and dash/POSIX scripting
 
 ### **xshopt** overview
 This command line framework runs multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
@@ -12,7 +12,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 * Focus on the functionality (implementing *commands* and *options*);
 * Refactoring *commands* and *options* easly just changing the help menu (header).
 
-### **xshopt** takes care (for you) the need of...
+### **xshopt** takes care for you the need of...
 * implementing the *--version* and *--help* commands;
 * implementing logging options such as: *--error*, *--warning*, *--info*, *--quiet*, *--log-file=\<file\>*
 * implementing logging functions such as: *_log_abort*, *_log_error*, *_log_info*, ... (see below).
@@ -43,7 +43,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 * **_matches** <var> <regex>: Returns exit code 0 if is the variable is valid based on the regex.
 * **_now**: Returns the date based on the format of the variable DATEFRM.
 
-### Functions that you can overriden (original empty function)
+### Functions that you can overriden (original empty)
 * **_start** <args>: Called before the parsing of the arguments-
 * **_cleanup**: Called when there is an interruption (^C or the process was killed)
 * **_fisish**: Called just before the process finishs (after _cleanup of exit 0)
@@ -119,20 +119,16 @@ ssh_kill{}{
 ```
 
 ### Some calling examples
-```./myprog.sh (by default without parameters call the help)```
-```sh
-./myprog.sh --version
+```./myprog.sh``` (by default without parameters call the help)
+```./myprog.sh --version```
+```./myprog.sh --help```
 ```
-```sh
-./myprog.sh --help
-```
-```sh
 ./myprog.sh --debug -s -d http://secure.com/file1 --use-wget -d http://demo.com/file2 -k \
                     -s me@demo.com --use=curl -d http://secure.com/file3 --use wget \
                     -d http://secure.com/file4 -k me@demo.com
 ```
 
-### The shell funtions called by the framwork (for the last below command line):
+### Shell funtions called (for the last above calling exmple):
 ```sh
 opt_debug
 ssh_start
