@@ -1,26 +1,28 @@
-## xshopt - eXtreme SH Opt Library
-## (Compatible with bash and dash/POSIX)
+# xshopt - eXtreme SH Opt Library
+*(Compatible with bash and dash/POSIX)*
 
-**xshopt** is a command line framework where it can run multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
+## **xshopt** overview:
+This command line framework runs multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
 
-**xshopt** helps you:
+## **xshopt** helps you:
 * To create a sh scripts very quickly (compatible with POSIX);
 * Focus on the functionality (implementing *commands* and *options*);
 * Refactoring *commands* and *options* easly just changing the help menu (header).
 
-**xshopt** takes care (for you) the need of...
-* implementing the *--version* command;
-* implementing the *--help* command;
+## **xshopt** takes care (for you) the need of...
+* implementing the *--version* and *--help* commands;
 * implementing logging options such as: *--error*, *--warning*, *--info*, *--quiet*, *--log-file=\<file\>*
-* implementing logging functions such as: *log_abort*, *log_error*, *log_warning*, *log_info*, *log_debug*
-* implementing the *--compress* and *--decompress* command that integrates the library in the original script;
-* implementing other helpful methods like *get_var* and *get_fn* whitch returns the first valid argument;
+* implementing logging functions such as: *_log_abort*, *_log_error*, *_log_info*, ... (see below).
+* implementing the *--compress* and *--decompress* command whitch integrates the library with the main script;
+* implementing other helpful methods like *_get_var*, *_get_fn* whitch returns the first valid argument;
 * validating if the commands and options specified are correct based on header of the file;
 * calling shell functions for each 'commands' and 'options', E.g.:
   * *--my-command* commands calls a shell function named: *my_command*;
   * *--my-option* option calls a shell function named: *opt_my_option*;
 
-**xshopt** program example:
+## **xshopt** example
+
+### The program dss.sh
 ```sh
 #!/bin/sh
 #- Dowload some stuff v1.0 ($PROG) - Copyright (C) 2015 Auther<author@domain.com> with MIT Licence
@@ -56,7 +58,7 @@ DIR="$(cd "$(dirname "$ARG0")" && pwd)"
 # OPTIONS
 METHOD=curl
 
-opt_use() { [ "$1" = wget ] || [ "$1" = wget ] || log_abort "Unsupported method '$METHOD'."; METHOD="$1"; }
+opt_use() { [ "$1" = wget ] || [ "$1" = wget ] || _log_abort "Unsupported method '$METHOD'."; METHOD="$1"; }
 opt_use_curl(){ use curl; }
 opt_use_wget(){ use wget; }
 
@@ -65,30 +67,30 @@ DEFAULT_ADDR=me@demo.com
 
 download(){
   case "$METHOD" in
-    curl) log_debug "Executing: curl -OL $1"; curl -OL "$1";;
-    wget) log_debug "Executing: wget $1"; wget "$1";;
+    curl) _log_run curl -OL "$1";;
+    wget) _log_run wget "$1";;
   asec
 }
 
 ssh_start(){
-  local ADDR=$(get_var "$1" $DEFAULT_ADDR)
-  local PID="$(ps -ef | fgrep -v grep | fgrep ssh "$ADDR" | awk '{print $2}' | grep . | xargs echo)"
-  [ -n "$PID" ] && log_abort "SSH session already running with PID: $PID"
-  log_debug "Executing: nohup ssh $ADDR &"
-  nohup ssh "$ADDR" > /dev/null 2>&1 &
-  sleep 2
+  local ADDR=$(_get_var "$1" $DEFAULT_ADDR)
+  local PID="$(ps -ef | fgrep -v grep | fgrep ssh "$ADDR" | awk '{print $2}' | xargs echo)"
+  [ -n "$PID" ] && _log_abort "SSH session already running with PID: $PID"
+  _log_runb ssh "$ADDR"
+  _log_run sleep 2
+  PID="$(ps -ef | fgrep -v grep | fgrep ssh "$ADDR" | awk '{print $2}' | xargs echo)"
+  [ -n "$PID" ] && _log_info "SSH session running with PID $PID" || _log_abort "SSH session didn't started"
 }
 
 ssh_kill{}{
-  local ADDR=$(get_var "$1" $DEFAULT_ADDR)
-  local PID="$(ps -ef | fgrep -v grep | fgrep ssh "$ADDR" | awk '{print $2}' | grep . | xargs echo)"
-  [ -z "$PID" ] && log_abort "No SSH sessions are running"
-  log_debug "Executing: kill -s TERM $PID"
-  kill -s TERM $PID
+  local ADDR=$(_get_var "$1" $DEFAULT_ADDR)
+  local PID="$(ps -ef | fgrep -v grep | fgrep ssh "$ADDR" | awk '{print $2}' | xargs echo)"
+  [ -z "$PID" ] && _log_warn "No SSH sessions are running"
+  _log_run kill -s TERM $PID
 }
 ```
 
-**xshopt** program calling examples:
+### Some calling examples
 ```sh
 ./myprog.sh (by default without parameters call the help)
 ./myprog.sh --version
@@ -98,7 +100,7 @@ ssh_kill{}{
                     -d http://secure.com/file4 -k me@demo.com
 ```
 
-**xshopt** shell funtions called for the below command line:
+### The shell funtions called by the framwork (for the last below command line):
 ```sh
 opt_debug
 ssh_start
@@ -113,3 +115,28 @@ opt_use wget
 download http://secure.com/file4
 ssh_kill me@demo.com
 ```
+
+## **xshopt** API
+
+### Built in functions
+* **_log_abort** <code> <message...>: Logs an error message to stderr and terminates the program (uses kill).
+* **_log_error** <message...>: Logs an error message to stderr.
+* **_log_warn** <message...>: Logs a warning message to stdout.
+* **_log_info** <message...>: Logs an information message to stdout.
+* **_log_debug** <message...>: Logs a debug message to stdout.
+* **_log_done** <message...>: Logs a debug message to stdout and exits the program (uses exit 0).
+* **_log_run** <cmd+params...>: Logs the debug command to stdout and runs the command.
+* **_log_runb** <cmd+params...>: Logs the debug command to stdout and runs the command on background.
+* **_get_var** <var1> <var2> ... <varx>: Returns the first non empty variable.
+* **_get_fn** <fn1> <fn2> ... <fnx>: Returns the first existing function/command line.
+* **_get_gfn** <fn1> <fn2> ... <fnx>: Returs the first existing gnu command line.
+* **_is_fn** <fn>: Returns exit code 0 if is a valid function/command line.
+* **_is_gfn** <fn>: Returns exit code 0 if is a valid gnu command line.
+* **_ensure** <var> <code> <message...>: Ensure that var is not emply else calls _log_about.
+* **_matches** <var> <regex>: Returns exit code 0 if is the variable is valid based on the regex.
+* **_now**: Returns the date based on the format of the variable DATEFRM.
+
+### Functions that you can overriden (original empty function)
+* **_start** <args>: Called before the parsing of the arguments-
+* **_cleanup**: Called when there is an interruption (^C or the process was killed)
+* **_fisish**: Called just before the process finishs (after _cleanup of exit 0)
