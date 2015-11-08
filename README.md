@@ -16,7 +16,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 * implementing the *--version* and *--help* commands;
 * implementing logging options such as: *--error*, *--warning*, *--info*, *--quiet*, *--log-file=\<file>*
 * implementing logging functions such as: *_log_error*, *_log_info*, *_log_exit*, ... (see below).
-* implementing the *--compress* and *--decompress* command whitch integrates the library with the main script;
+* implementing the *--include* and *--exclude* command whitch integrates the library with the main script;
 * implementing other helpful methods like *_get_var*, *_get_fn* whitch returns the first valid argument;
 * validating if the commands and options specified are correct based on header of the file;
 * calling shell functions for each *commands* and *options*
@@ -50,7 +50,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ### Hidden functions
 * **version**: Command *--version* prints claimer based on script lines started with '#- '.
 * **help**: Command *--help* (usage) prints a menu based on script lines started with '## ' and do exit 0.
-* **opt_strict**: Option *--strict** enables the 
+* **opt_strict**: Option *--strict** enables the exiting behavior if any command returns a exit code not 0.
 * **opt_error**: Option *--error* enables logging from only *_log_error*, *_log_exit*, *_log_abort*.
 * **opt_warning**: Option *--warning* enables logging from the same as above and *_log_warn*.
 * **opt_info**: Option *--info* enables logging from all *_log_...* functions except *_log_debug*.
@@ -58,7 +58,9 @@ This command line framework runs multiple *options* and *commands* (respecting t
 * **opt_log_file** \<file>: Option *--log-file=\<file>* redirects the stdout and stderr logging messages to a file.
 * **_run** \<args...>: Main function that does the work of analaysing and call the *commands* and *options* with the correct number of arguments.
 
-### Others tips:
+# Additional information
+
+### Tips:
 * To remove logging features, just remove it from the script header (don't need to touch **xshlog** library)
 * The *command* implementation function names matches the long name. [E.g. --my-command => my_command(){}]
 * The *options* implementation function names must have the prefix opt_. [E.g. --my-option => opt_my_option(){}]
@@ -69,10 +71,15 @@ This command line framework runs multiple *options* and *commands* (respecting t
  * Parameter like **[name]** are optional with some restrictions. [E.g. *--cmd=-1*, *--cmd 1* or *--cmd -- -1*]
  * Note: The optional values can't start with - unless if used the = version. The workarround is use -- before.
 
+## Include and exclude [Future]
+* It's possible to *--include* the **xshopt** library as part of them main script. (Simplifies distribution)
+* It's possible to *--exclude* the **xshopt** library from the main script.
+
 ### Limitations:
 * All *command* and *options* needs to have a long name starting with --. [E.g.: *--help*]
 * All *command* and *options* can have a short version starting with -. [E.g.: *-h*]
 * For now only one parameter is supported in *commands* and *options*.
+* The argument validations are done in real time and aren't done ahead (before starting calling *commands*).
 
 ### Future:
 * Support multi arguments per *commands* and *options*. [E.g.: *--swap <x> <y>)
@@ -156,7 +163,7 @@ ssh_kill{}{
 ```./myprog.sh --version```
 ```./myprog.sh --help```
 ```
-./myprog.sh --debug -s -d http://secure.com/file1 --use-wget -d http://demo.com/file2 -k \
+./myprog.sh --debug -s -d http://secure.com/file1 --use-wget -d http://secure.com/file2 -k \
                     -s me@demo.com --use=curl -d http://secure.com/file3 --use wget \
                     -d http://secure.com/file4 -k me@demo.com
 ```
@@ -165,14 +172,14 @@ ssh_kill{}{
 ```sh
 opt_debug
 ssh_start
-download http://secure.com/file1
+download 'http://secure.com/file1'
 opt_use_wget
-download http://secure.com/file2
+download 'http://secure.com/file2'
 ssh_kill
-ssh_start me@demo.com
+ssh_start 'me@demo.com'
 opt_use curl
-download http://secure.com/file3
+download 'http://secure.com/file3'
 opt_use wget
-download http://secure.com/file4
-ssh_kill me@demo.com
+download 'http://secure.com/file4'
+ssh_kill 'me@demo.com'
 ```
