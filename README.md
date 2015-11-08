@@ -1,10 +1,12 @@
-## xshopt - eXtreme SH Opt Library (Compatible with bash and dash/POSIX)
+## xshopt - eXtreme SH Opt Library
+## (Compatible with bash and dash/POSIX)
 
 **xshopt** is a command line framework where it can run multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
 
 **xshopt** helps you:
-* To create a sh scripts very quickly (compatible with POSIX)
-* Focus on the functionality (implementing *commands* and *options*)
+* To create a sh scripts very quickly (compatible with POSIX);
+* Focus on the functionality (implementing *commands* and *options*);
+* Refactoring *commands* and *options* easly just changing the help menu (header).
 
 **xshopt** takes care (for you) the need of...
 * implementing the *--version* command;
@@ -52,8 +54,8 @@ DIR="$(cd "$(dirname "$ARG0")" && pwd)"
 ### BEGIN (DON'T CHANGE THIS LINE) ###
 
 # OPTIONS
-
 METHOD=curl
+
 opt_use() { [ "$1" = wget ] || [ "$1" = wget ] || log_abort "Unsupported method '$METHOD'."; METHOD="$1"; }
 opt_use_curl(){ use curl; }
 opt_use_wget(){ use wget; }
@@ -98,16 +100,16 @@ ssh_kill{}{
 
 **xshopt** shell funtions called for the below command line:
 ```sh
-debug
+opt_debug
 ssh_start
 download http://secure.com/file1
-use_wget
+opt_use_wget
 download http://secure.com/file2
 ssh_kill
 ssh_start me@demo.com
-use curl
+opt_use curl
 download http://secure.com/file3
-use wget
+opt_use wget
 download http://secure.com/file4
 ssh_kill me@demo.com
 ```
