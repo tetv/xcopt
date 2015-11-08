@@ -5,7 +5,7 @@
 * **xshopt** is compatible with bash and dash/POSIX scripting
 
 ### **xshopt** overview
-This command line framework runs multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
+This command line framework runs multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is always expected.
 
 ### **xshopt** helps you...
 * Creating a sh scripts very quickly (compatible with POSIX);
@@ -15,23 +15,22 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ### **xshopt** takes care for you the need of...
 * implementing the *--version* and *--help* commands;
 * implementing logging options such as: *--error*, *--warning*, *--info*, *--quiet*, *--log-file=\<file>*
-* implementing logging functions such as: *_log_abort*, *_log_error*, *_log_info*, ... (see below).
+* implementing logging functions such as: *_log_error*, *_log_info*, *_log_exit*, ... (see below).
 * implementing the *--compress* and *--decompress* command whitch integrates the library with the main script;
 * implementing other helpful methods like *_get_var*, *_get_fn* whitch returns the first valid argument;
 * validating if the commands and options specified are correct based on header of the file;
-* calling shell functions for each 'commands' and 'options', E.g.:
-  * *--my-command* commands calls a shell function named: *my_command*;
-  * *--my-option* option calls a shell function named: *opt_my_option*;
+* calling shell functions for each *commands* and *options*
 
-# **xshopt** API
+# API
 
 ### Built in functions
-* **_log_abort** \<code> \<message...>: Logs an error message to stderr and terminates the program (uses kill).
 * **_log_error** \<message...>: Logs an error message to stderr.
 * **_log_warn** \<message...>: Logs a warning message to stdout.
 * **_log_info** \<message...>: Logs an information message to stdout.
-* **_log_debug** \<message...>: Logs a debug message to stdout.
+* **_log_debug** [code] \<message...>: Logs a debug message to stdout.
 * **_log_done** \<message...>: Logs a debug message to stdout and exits the program (uses exit 0).
+* **_log_exit** \<code> \<message...>: Logs an error message to stderr and exits the program (uses exit).
+* **_log_abort** \<code> \<message...>: Logs an error message to stderr and terminates the program (uses kill).
 * **_log_run** \<cmd+params...>: Logs the debug command to stdout and runs the command.
 * **_log_runb** \<cmd+params...>: Logs the debug command to stdout and runs the command on background.
 * **_get_var** \<var1> \<var2> ... \<varx>: Returns the first non empty variable.
@@ -46,9 +45,42 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ### Functions that you can overriden (original empty)
 * **_start** \<args...>: Called before the parsing of the arguments-
 * **_cleanup**: Called when there is an interruption (^C or the process was killed)
-* **_fisish**: Called just before the process finishs (after _cleanup of exit 0)
+* **_finish**: Called just before the process finish (after _cleanup of exit 0)
 
-# **xshopt** example
+### Hidden functions
+* **version**: Command *--version* prints claimer based on script lines started with '#- '.
+* **help**: Command *--help* (usage) prints a menu based on script lines started with '## ' and do exit 0.
+* **opt_strict**: Option *--strict** enables the 
+* **opt_error**: Option *--error* enables logging from only *_log_error*, *_log_exit*, *_log_abort*.
+* **opt_warning**: Option *--warning* enables logging from the same as above and *_log_warn*.
+* **opt_info**: Option *--info* enables logging from all *_log_...* functions except *_log_debug*.
+* **opt_debug**: Option *--debug* enables logging from all *_log_...* functions.
+* **opt_log_file** \<file>: Option *--log-file=\<file>* redirects the stdout and stderr logging messages to a file.
+* **_run** \<args...>: Main function that does the work of analaysing and call the *commands* and *options* with the correct number of arguments.
+
+### Others tips:
+* To remove logging features, just remove it from the script header (don't need to touch **xshlog** library)
+* The *command* implementation function names matches the long name. [E.g. --my-command => my_command(){}]
+* The *options* implementation function names must have the prefix opt_. [E.g. --my-option => opt_my_option(){}]
+* **Paramters**:
+ * Long parameters with arguments may use as well equals sign: (E.g. *--cmd=param* or *--cmd param*]
+ * Parameter like **\<name>** are required and doesn't have restrictions. [E.g. *--cmd=-1* or *--cmd -1*]
+ * Parameter like **name** are required and must contains that value. [E.g.: *--cmd=name*]
+ * Parameter like **[name]** are optional with some restrictions. [E.g. *--cmd=-1*, *--cmd 1* or *--cmd -- -1*]
+ * Note: The optional values can't start with - unless if used the = version. The workarround is use -- before.
+
+### Limitations:
+* All *command* and *options* needs to have a long name starting with --. [E.g.: *--help*]
+* All *command* and *options* can have a short version starting with -. [E.g.: *-h*]
+* For now only one parameter is supported in *commands* and *options*.
+
+### Future:
+* Support multi arguments per *commands* and *options*. [E.g.: *--swap <x> <y>)
+* Support format like *(male|female|unknown)* for accept mandatorly one specific value
+* Support format like *[male|female|unknow]* for accept optionaly one specific value
+* Support format like *[<param>] for accept any value as a optional value.
+
+# Example
 
 ### The program dss.sh
 ```sh
@@ -62,6 +94,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ## 
 ## Usage: $PROG [OPTIONS] [COMMANDS]
 ## Options:
+##       --scrict                 If a command fails (exit code not 0) exits the program.
 ##       --info                   Set log level to info (default)
 ##       --warning                Set log level to warning
 ##       --debug                  Set log level to debug
@@ -72,8 +105,8 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ##       --use=<method>           Set the download method (options: curl, wget) - default curl
 ## Commands:
 ##   -d, --download=<url>         Dowload a specific <url>
-##   -s, --ssh-start [addr]       Start ssh to grant network access
-##   -k, --ssh-kill [addr]        Kill ssh to remoke network access
+##   -s, --ssh-start=[addr]       Start ssh to grant network access
+##   -k, --ssh-kill=[addr]        Kill ssh to remoke network access
 ##       --help                   Displays this help and exists
 ##       --version                Displays output version and exists
 
@@ -86,7 +119,7 @@ DIR="$(cd "$(dirname "$ARG0")" && pwd)"
 # OPTIONS
 METHOD=curl
 
-opt_use() { [ "$1" = wget ] || [ "$1" = wget ] || _log_abort "Unsupported method '$METHOD'."; METHOD="$1"; }
+opt_use() { [ "$1" = curl ] || [ "$1" = wget ] || _log_exit 11 "Unsupported method '$METHOD'."; METHOD="$1"; }
 opt_use_curl(){ use curl; }
 opt_use_wget(){ use wget; }
 
@@ -103,11 +136,11 @@ download(){
 ssh_start(){
   local ADDR=$(_get_var "$1" $DEFAULT_ADDR)
   local PID="$(ps -ef | fgrep -v grep | fgrep ssh "$ADDR" | awk '{print $2}' | xargs echo)"
-  [ -n "$PID" ] && _log_abort "SSH session already running with PID: $PID"
+  [ -n "$PID" ] && _log_exit 12 "SSH session already running with PID: $PID"
   _log_runb ssh "$ADDR"
   _log_run sleep 2
   PID="$(ps -ef | fgrep -v grep | fgrep ssh "$ADDR" | awk '{print $2}' | xargs echo)"
-  [ -n "$PID" ] && _log_info "SSH session running with PID $PID" || _log_abort "SSH session didn't started"
+  [ -n "$PID" ] && _log_info "SSH session running with PID $PID" || _log_error 13 "SSH session didn't started";
 }
 
 ssh_kill{}{
