@@ -1,7 +1,8 @@
-# **xshopt** overview
+# **xshopt** library
 
 ### **xshopt** definition
-**xshopt** means *eXtreme SH Opt Library* and it's compatible with bash and dash/POSIX scripting.
+**xshopt** means literally: *eXtreme SH Opt Library*
+**xshopt** is compatible with bash and dash/POSIX scripting.
 
 ### **xshopt** overview
 This command line framework runs multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
@@ -25,7 +26,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 # **xshopt** API
 
 ### Built in functions
-* **_log_abort** <code> <message...>: Logs an error message to stderr and terminates the program (uses kill).
+* **_log_abort** \<code\> \<message...>: Logs an error message to stderr and terminates the program (uses kill).
 * **_log_error** <message...>: Logs an error message to stderr.
 * **_log_warn** <message...>: Logs a warning message to stdout.
 * **_log_info** <message...>: Logs an information message to stdout.
@@ -118,10 +119,14 @@ ssh_kill{}{
 ```
 
 ### Some calling examples
+```./myprog.sh (by default without parameters call the help)```
 ```sh
-./myprog.sh (by default without parameters call the help)
 ./myprog.sh --version
+```
+```sh
 ./myprog.sh --help
+```
+```sh
 ./myprog.sh --debug -s -d http://secure.com/file1 --use-wget -d http://demo.com/file2 -k \
                     -s me@demo.com --use=curl -d http://secure.com/file3 --use wget \
                     -d http://secure.com/file4 -k me@demo.com
