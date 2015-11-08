@@ -7,9 +7,9 @@
 ### **xshopt** overview
 This command line framework runs multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
 
-### **xshopt** helps you
-* To create a sh scripts very quickly (compatible with POSIX);
-* Focus on the functionality (implementing *commands* and *options*);
+### **xshopt** helps you...
+* Creating a sh scripts very quickly (compatible with POSIX);
+* Focusing on the functionality (implementing *commands* and *options*);
 * Refactoring *commands* and *options* easly just changing the help menu (header).
 
 ### **xshopt** takes care for you the need of...
