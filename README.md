@@ -49,7 +49,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ##       --help                   Displays this help and exists
 ##       --version                Displays output version and exists
 
-if [ -n "$BASH_VERSION" ]; then ARG0="${BASH_SOURCE[0]}"; else ARG0="$0"; fi
+[ -n "$BASH_VERSION" ] && ARG0="${BASH_SOURCE[0]}" || ARG0="$0"
 DIR="$(cd "$(dirname "$ARG0")" && pwd)"
 . "$DIR/xshopt.sh"
 
