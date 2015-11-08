@@ -15,7 +15,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ### **xshopt** takes care for you the need of...
 * implementing the *--version* and *--help* commands;
 * implementing logging options such as: *--error*, *--warning*, *--info*, *--quiet*, *--log-file=\<file>*
-* implementing logging functions such as: *_log_error*, *_log_info*, *_log_exit*, ... (see below).
+* implementing logging functions such as: *_log_error*, *_log_info*, *_log_exit*, and more... (see below).
 * implementing the *--include* and *--exclude* command whitch integrates the library with the main script;
 * implementing other helpful methods like *_get_var*, *_get_fn* whitch returns the first valid argument;
 * validating if the commands and options specified are correct based on header of the file;
@@ -50,7 +50,6 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ### Hidden functions
 * **version**: Command *--version* prints claimer based on script lines started with '#- '.
 * **help**: Command *--help* (usage) prints a menu based on script lines started with '## ' and do exit 0.
-* **opt_strict**: Option *--strict** enables the exiting behavior if any command returns a exit code not 0.
 * **opt_error**: Option *--error* enables logging from only *_log_error*, *_log_exit*, *_log_abort*.
 * **opt_warning**: Option *--warning* enables logging from the same as above and *_log_warn*.
 * **opt_info**: Option *--info* enables logging from all *_log_...* functions except *_log_debug*.
@@ -101,7 +100,6 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ## 
 ## Usage: $PROG [OPTIONS] [COMMANDS]
 ## Options:
-##       --scrict                 If a command fails (exit code not 0) exits the program.
 ##       --info                   Set log level to info (default)
 ##       --warning                Set log level to warning
 ##       --debug                  Set log level to debug
