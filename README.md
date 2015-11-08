@@ -1,19 +1,15 @@
-# xshopt - eXtreme SH Opt Library (Compatible with bash and dash/POSIX)
+## xshopt - eXtreme SH Opt Library (Compatible with bash and dash/POSIX)
 
-**xshopt** is a command line framework where it can run multiple options and commands (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
-
-**xshopt** helps you:
-* To create a sh scripts very quickly (compatible with POSIX)
-* Focus on the functionality (commands or options)
+**xshopt** is a command line framework where it can run multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
 
 **xshopt** helps you:
 * To create a sh scripts very quickly (compatible with POSIX)
-* Focus on the functionality (commands or options)
+* Focus on the functionality (implementing *commands* and *options*)
 
 **xshopt** takes care (for you) the need of...
 * implementing the *--version* command;
 * implementing the *--help* command;
-* implementing logging options such as: *--error*, *--warning*, *--info*, *--quiet*, *--log-file=<file>*
+* implementing logging options such as: *--error*, *--warning*, *--info*, *--quiet*, *--log-file=\<file\>*
 * implementing logging functions such as: *log_abort*, *log_error*, *log_warning*, *log_info*, *log_debug*
 * implementing the *--compress* and *--decompress* command that integrates the library in the original script;
 * implementing other helpful methods like *get_var* and *get_fn* whitch returns the first valid argument;
@@ -95,7 +91,9 @@ ssh_kill{}{
 ./myprog.sh (by default without parameters call the help)
 ./myprog.sh --version
 ./myprog.sh --help
-./myprog.sh --debug -s -d http://secure.com/file1 --use-wget -d http://demo.com/file2 -k -s me@demo.com --use=curl -d http://secure.com/file3 --use wget -d http://secure.com/file4 -k me@demo.com
+./myprog.sh --debug -s -d http://secure.com/file1 --use-wget -d http://demo.com/file2 -k \
+                    -s me@demo.com --use=curl -d http://secure.com/file3 --use wget \
+                    -d http://secure.com/file4 -k me@demo.com
 ```
 
 **xshopt** shell funtions called for the below command line:
