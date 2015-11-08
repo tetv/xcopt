@@ -1,15 +1,17 @@
-# xshopt - eXtreme SH Opt Library
-*(Compatible with bash and dash/POSIX)*
+# **xshopt** overview
 
-## **xshopt** overview:
+### **xshopt** definition
+**xshopt** means *eXtreme SH Opt Library* and it's compatible with bash and dash/POSIX scripting.
+
+### **xshopt** overview
 This command line framework runs multiple *options* and *commands* (respecting the order) as if they were sub-programs. Typically, *options* are used for change state (set behaviour), and *commands* are used to do the real work. Although *options* and *commands* are threated similarly, at least one commands is expected.
 
-## **xshopt** helps you:
+### **xshopt** helps you
 * To create a sh scripts very quickly (compatible with POSIX);
 * Focus on the functionality (implementing *commands* and *options*);
 * Refactoring *commands* and *options* easly just changing the help menu (header).
 
-## **xshopt** takes care (for you) the need of...
+### **xshopt** takes care (for you) the need of...
 * implementing the *--version* and *--help* commands;
 * implementing logging options such as: *--error*, *--warning*, *--info*, *--quiet*, *--log-file=\<file\>*
 * implementing logging functions such as: *_log_abort*, *_log_error*, *_log_info*, ... (see below).
@@ -20,7 +22,32 @@ This command line framework runs multiple *options* and *commands* (respecting t
   * *--my-command* commands calls a shell function named: *my_command*;
   * *--my-option* option calls a shell function named: *opt_my_option*;
 
-## **xshopt** example
+# **xshopt** API
+
+### Built in functions
+* **_log_abort** <code> <message...>: Logs an error message to stderr and terminates the program (uses kill).
+* **_log_error** <message...>: Logs an error message to stderr.
+* **_log_warn** <message...>: Logs a warning message to stdout.
+* **_log_info** <message...>: Logs an information message to stdout.
+* **_log_debug** <message...>: Logs a debug message to stdout.
+* **_log_done** <message...>: Logs a debug message to stdout and exits the program (uses exit 0).
+* **_log_run** <cmd+params...>: Logs the debug command to stdout and runs the command.
+* **_log_runb** <cmd+params...>: Logs the debug command to stdout and runs the command on background.
+* **_get_var** <var1> <var2> ... <varx>: Returns the first non empty variable.
+* **_get_fn** <fn1> <fn2> ... <fnx>: Returns the first existing function/command line.
+* **_get_gfn** <fn1> <fn2> ... <fnx>: Returs the first existing gnu command line.
+* **_is_fn** <fn>: Returns exit code 0 if is a valid function/command line.
+* **_is_gfn** <fn>: Returns exit code 0 if is a valid gnu command line.
+* **_ensure** <var> <code> <message...>: Ensure that var is not emply else calls _log_about.
+* **_matches** <var> <regex>: Returns exit code 0 if is the variable is valid based on the regex.
+* **_now**: Returns the date based on the format of the variable DATEFRM.
+
+### Functions that you can overriden (original empty function)
+* **_start** <args>: Called before the parsing of the arguments-
+* **_cleanup**: Called when there is an interruption (^C or the process was killed)
+* **_fisish**: Called just before the process finishs (after _cleanup of exit 0)
+
+# **xshopt** example
 
 ### The program dss.sh
 ```sh
@@ -115,28 +142,3 @@ opt_use wget
 download http://secure.com/file4
 ssh_kill me@demo.com
 ```
-
-## **xshopt** API
-
-### Built in functions
-* **_log_abort** <code> <message...>: Logs an error message to stderr and terminates the program (uses kill).
-* **_log_error** <message...>: Logs an error message to stderr.
-* **_log_warn** <message...>: Logs a warning message to stdout.
-* **_log_info** <message...>: Logs an information message to stdout.
-* **_log_debug** <message...>: Logs a debug message to stdout.
-* **_log_done** <message...>: Logs a debug message to stdout and exits the program (uses exit 0).
-* **_log_run** <cmd+params...>: Logs the debug command to stdout and runs the command.
-* **_log_runb** <cmd+params...>: Logs the debug command to stdout and runs the command on background.
-* **_get_var** <var1> <var2> ... <varx>: Returns the first non empty variable.
-* **_get_fn** <fn1> <fn2> ... <fnx>: Returns the first existing function/command line.
-* **_get_gfn** <fn1> <fn2> ... <fnx>: Returs the first existing gnu command line.
-* **_is_fn** <fn>: Returns exit code 0 if is a valid function/command line.
-* **_is_gfn** <fn>: Returns exit code 0 if is a valid gnu command line.
-* **_ensure** <var> <code> <message...>: Ensure that var is not emply else calls _log_about.
-* **_matches** <var> <regex>: Returns exit code 0 if is the variable is valid based on the regex.
-* **_now**: Returns the date based on the format of the variable DATEFRM.
-
-### Functions that you can overriden (original empty function)
-* **_start** <args>: Called before the parsing of the arguments-
-* **_cleanup**: Called when there is an interruption (^C or the process was killed)
-* **_fisish**: Called just before the process finishs (after _cleanup of exit 0)
