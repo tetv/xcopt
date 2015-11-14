@@ -1,7 +1,7 @@
 # **xcopt** library
 
 ### **xcopt** definition
-* **xcopt** means literally: *eXtreme SH Opt Library*
+* **xcopt** means literally: *eXtreme Command OPTions library*
 * **xcopt** is compatible with bash and dash/POSIX scripting
 
 ### **xcopt** overview
