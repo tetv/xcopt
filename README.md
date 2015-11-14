@@ -60,12 +60,12 @@ This command line framework runs multiple *options* and *commands* (respecting t
 # Additional information
 
 ### Parameters:
-* *<gender>* or *GENDER*:     Required and can contain any value combination (E.g. *male*, *female*, ...)
-* *male* or *(male)*:         Required and must contain the value specified (E.g. *male*)
-* *(male|female)*:            Required and can caontain any value specified (E.g. *male* or *male*)
-* *[<gender>]* or *[GENDER]*: Optional and can contain any value combination (E.g. *male*, *female*, ...)
-* *[male]* or [(male)]*:      Optional and must contain the value specified (E.g. *male*)
-* *[male|female]*:            Optional and can contain any value specified (E.g. *male* or *male*)
+* **\<gender>** or **GENDER**:      Required and can contain any value combination (E.g. *male*, *female*, ...)
+* **male** or **(male)**:           Required and must contain the value specified (E.g. *male*)
+* **(male|female)**:                Required and can caontain any value specified (E.g. *male* or *male*)
+* **[\<gender>]** or **[GENDER]**:  Optional and can contain any value combination (E.g. *male*, *female*, ...)
+* **[male]** or **[(male)]**:       Optional and must contain the value specified (E.g. *male*)
+* **[male|female]**:                Optional and can contain any value specified (E.g. *male* or *male*)
 
 ### Tips:
 * To remove logging features, just remove it from the header definition (don't need to touch **xcopt** library)
