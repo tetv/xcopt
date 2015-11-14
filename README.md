@@ -42,7 +42,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 * **is_regex** \<var> \<regex>: Returns exit code 0 if is the variable is valid based on the regex.
 * **_now**: Returns the date based on the format of the variable DATEFRM.
 
-### Functions that you can overriden (original empty)
+### Functions that you can overriden (originaly empty)
 * **_start** \<args...>: Called before the parsing of the arguments-
 * **_cleanup**: Called when there is an interruption (^C or the process was killed)
 * **_finish**: Called just before the process finish (after _cleanup of exit 0)
@@ -62,7 +62,7 @@ This command line framework runs multiple *options* and *commands* (respecting t
 ### Parameters:
 * **\<gender>** or **GENDER**:      Required and can contain any value combination (E.g. *male*, *female*, ...)
 * **male** or **(male)**:           Required and must contain the value specified (E.g. *male*)
-* **(male|female)**:                Required and can caontain any value specified (E.g. *male* or *male*)
+* **(male|female)**:                Required and can contain any value specified (E.g. *male* or *male*)
 * **[\<gender>]** or **[GENDER]**:  Optional and can contain any value combination (E.g. *male*, *female*, ...)
 * **[male]** or **[(male)]**:       Optional and must contain the value specified (E.g. *male*)
 * **[male|female]**:                Optional and can contain any value specified (E.g. *male* or *male*)
