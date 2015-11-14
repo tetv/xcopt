@@ -34,15 +34,12 @@ This command line framework runs multiple *options* and *commands* (respecting t
 * **log_run** \<cmd+params...>: Logs the debug command to stdout and runs the command.
 * **log_runb** \<cmd+params...>: Logs the debug command to stdout and runs the command on background.
 * **log_exit_if_empty** \<var> \<code> \<message...>: Log the the first argument is not emply else calls log_exit.
-
 * **get_var** \<var1> \<var2> ... \<varx>: Returns the first non empty variable.
 * **get_fn** \<fn1> \<fn2> ... \<fnx>: Returns the first existing function/command line.
 * **get_gfn** \<fn1> \<fn2> ... \<fnx>: Returs the first existing gnu command line.
-
 * **is_fn** \<fn>: Returns exit code 0 if is a valid function/command line.
 * **is_gfn** \<fn>: Returns exit code 0 if is a valid gnu command line.
 * **is_regex** \<var> \<regex>: Returns exit code 0 if is the variable is valid based on the regex.
-
 * **_now**: Returns the date based on the format of the variable DATEFRM.
 
 ### Functions that you can overriden (original empty)
@@ -62,55 +59,62 @@ This command line framework runs multiple *options* and *commands* (respecting t
 
 # Additional information
 
+### Parameters:
+* *<gender>* or *GENDER*:     Required and can contain any value combination (E.g. *male*, *female*, ...)
+* *male* or *(male)*:         Required and must contain the value specified (E.g. *male*)
+* *(male|female)*:            Required and can caontain any value specified (E.g. *male* or *male*)
+* *[<gender>]* or *[GENDER]*: Optional and can contain any value combination (E.g. *male*, *female*, ...)
+* *[male]* or [(male)]*:      Optional and must contain the value specified (E.g. *male*)
+* *[male|female]*:            Optional and can contain any value specified (E.g. *male* or *male*)
+
 ### Tips:
 * To remove logging features, just remove it from the header definition (don't need to touch **xcopt** library)
 * The *command* implementation function can have the prefix cmd_. [E.g. --my-command => [cmd_]my_command(){}]
 * The *options* implementation function must have the prefix opt_. [E.g. --my-option => opt_my_option(){}]
 * **Paramters**:
- * Long parameters with arguments may use as well equals sign: (E.g. *--cmd=param* or *--cmd param*]
- * Parameter like **\<name>** are required and doesn't have restrictions. [E.g. *--cmd=-1* or *--cmd -1*]
- * Parameter like **name** are required and must contains that value. [E.g.: *--cmd=name*]
- * Parameter like **[name]** are optional with some restrictions. [E.g. *--cmd=-1*, *--cmd 1* or *--cmd -- -1*]
- * Note: The optional values can't start with - unless if used the = version. The workarround is use -- before.
+  * Long parameters with arguments may use as well equals sign: (E.g. *--cmd=param* or *--cmd param*]
+  * Parameter like **\<name>** are required and doesn't have restrictions. [E.g. *--cmd=-1* or *--cmd -1*]
+  * Parameter like **name** are required and must contains that value. [E.g.: *--cmd=name*]
+  * Parameter like **[name]** are optional with some restrictions. [E.g. *--cmd=-1*, *--cmd 1* or *--cmd -- -1*]
+  * Note: The optional values can't start with - unless if used the = version. The workarround is use -- before.
 
 ## Include and exclude [Future]
 * It's possible to *--include* the **xcopt** library as part of them main script. (Simplifies distribution)
-* It's possible to *--exclude* the **xcopt** library from the main script.
+* It's possible to *--remove* the **xcopt** library from the main script (in is integrated on it).
 
 ### Limitations:
 * All *command* and *options* needs to have a long name starting with --. [E.g.: *--help*]
 * All *command* and *options* can have a short version starting with -. [E.g.: *-h*]
 * For now only one parameter is supported in *commands* and *options*.
-* The argument validations are done in real time and aren't done ahead (before starting calling *commands*).
+* The argument validations are done in real time and not ahead (before starting calling *commands* or *options*).
 
 ### Future:
-* Support multi arguments per *commands* and *options*. [E.g.: *--swap <x> <y>)
-* Support format like *(male|female|unknown)* for accept mandatorly one specific value
-* Support format like *[male|female|unknow]* for accept optionaly one specific value
-* Support format like *[<param>] for accept any value as a optional value.
+* Support multi arguments per *commands* and *options*. [E.g.: *-s, --swap <x> <y>*)
 
 # Example
 
 ### The program dss.sh
 ```sh
 #!/bin/sh
-#- Dowload some stuff v1.0 ($PROG) - Copyright (C) 2015 Auther<author@domain.com> with MIT Licence
-#- Powered by xcopt v1.0 (eXtream Command OPTions Library - Compatible with bash and dash/POSIX)
-#- This is free software: you are free to change and redistribute it.
-#- There is NO WARRANTY, to the extent permitted by law.
-# 
-## Dowload some stuff v1.0 ($PROG) - Copyright (C) 2015 Me<me@demo.com> with MIT Licence
+#- $PROG (Dowload some stuff) 1.0
+#- Copyright (C) 2015 Author, <author@domain.com>
+#- License MIT <http://opensource.org/licenses/MIT>.
+#- * This is free software: you are free to change and redistribute it.
+#- * There is NO WARRANTY, to the extent permitted by law.
+#
+## $PROG (eXtreme Commmand OPTions library) 1.0
+## Compatible with bash and dash/POSIX
 ## 
-## Usage: $PROG [OPTIONS] [COMMANDS]
+## Usage: $PROG [OPTION|COMMAND]...
 ## Options:
 ##       --info                   Set log level to info (default)
 ##       --warning                Set log level to warning
 ##       --debug                  Set log level to debug
 ##   -q, --quiet                  Set log level to error (quiet mode)
-##   -l, --log-file <file>        Set log file (stdout and stderr)
-##       --use-curl               Set the download method curl (default)
-##       --use-wget               Set the download method wget
-##       --use=<method>           Set the download method (options: curl, wget) - default curl
+##   -l, --log-file=<file>        Set log file (stdout and stderr)
+##       --use-curl               Set the download method as curl (default)
+##       --use-wget               Set the download method as wget
+##       --use=(curl|wget)        Set the download method
 ## Commands:
 ##   -d, --download=<url>         Dowload a specific <url>
 ##   -s, --ssh-start=[addr]       Start ssh to grant network access
@@ -124,16 +128,16 @@ DIR="$(cd "$(dirname "$ARG0")" && pwd)"
 
 ### BEGIN (DON'T CHANGE THIS LINE) ###
 
-# OPTIONS
+# VARIABLES
 METHOD=curl
+DEFAULT_ADDR=me@demo.com
 
-opt_use() { [ "$1" = curl ] || [ "$1" = wget ] || log_exit 11 "Unsupported method '$METHOD'."; METHOD="$1"; }
+# OPTIONS
+opt_use() { [ METHOD="$1"; }
 opt_use_curl(){ use curl; }
 opt_use_wget(){ use wget; }
 
 # COMMANDS
-DEFAULT_ADDR=me@demo.com
-
 download(){
   case "$METHOD" in
     curl) log_run curl -OL "$1";;
@@ -145,7 +149,8 @@ ssh_start(){
   local ADDR=$(get_var "$1" $DEFAULT_ADDR)
   local PID="$(ps -ef | fgrep -v grep | fgrep ssh "$ADDR" | awk '{print $2}' | xargs echo)"
   [ -n "$PID" ] && log_exit 12 "SSH session already running with PID: $PID"
-  log_runb ssh "$ADDR"
+  log_run ssh "$ADDR" printf ''
+  log_runb ssh -tt "$ADDR"
   log_run sleep 2
   PID="$(ps -ef | fgrep -v grep | fgrep ssh "$ADDR" | awk '{print $2}' | xargs echo)"
   [ -n "$PID" ] && log_info "SSH session running with PID $PID" || log_error 13 "SSH session didn't started";
